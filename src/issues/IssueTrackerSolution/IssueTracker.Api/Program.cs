@@ -26,7 +26,6 @@ if (app.Environment.IsDevelopment())
       
     });
 }
-
 app.MapIssueTracker();
 
 

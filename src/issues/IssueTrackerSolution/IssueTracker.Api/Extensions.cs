@@ -1,4 +1,5 @@
 using IssueTracker.Api.Catalog.Api;
+using IssueTracker.Api.Employee.Api;
 using Marten;
 using Npgsql;
 
@@ -10,12 +11,12 @@ public static class Extensions
     public static IHostApplicationBuilder AddIssueTrackerServices(this IHostApplicationBuilder host)
     {
         var services = host.Services;
-        
+        //.net 8 and forward- good idea 
         services.AddSingleton<TimeProvider>(_ => TimeProvider.System);
         
         services.AddAuthorization();
         services.AddAuthentication().AddJwtBearer();
-        
+        //use this l8r for when aggregates nd to the context
         services.AddHttpContextAccessor();
         
         var connectionString = host.Configuration.GetConnectionString("postgres") ?? throw new InvalidOperationException("No connection string found");
@@ -37,6 +38,7 @@ public static class Extensions
     public static IEndpointRouteBuilder MapIssueTracker(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapCatalog();
+        endpoints.MapEmployees();
   
         return endpoints;
     }
