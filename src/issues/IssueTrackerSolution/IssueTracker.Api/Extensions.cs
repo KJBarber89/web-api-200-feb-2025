@@ -16,6 +16,7 @@ public static class Extensions
         
         services.AddAuthorization();
         services.AddAuthentication().AddJwtBearer();
+        
         //use this l8r for when aggregates nd to the context
         services.AddHttpContextAccessor();
         

@@ -1,4 +1,6 @@
-﻿namespace IssueTracker.Api.Employees.Api;
+﻿using IssueTracker.Api.Employees.Services;
+
+namespace IssueTracker.Api.Employees.Api;
 
 public static class Extensions
 {
@@ -9,7 +11,9 @@ public static class Extensions
             .WithDescription("Employee Related Stuff")
             .RequireAuthorization(); //chk to mk sure there is a trusted JWT on the Authoriazation Header.
 
-        group.MapPost("/software/{softwareId:guid}/problems", SubmittingAProblem.SubmitAsync);
+        group.MapPost("/software/{softwareId:guid}/problems", SubmittingAProblem.SubmitAsync)
+            .AddEndpointFilter<SoftwareMustExistInCatalogEndpointFilster>();
+
 
         return routes;
     }

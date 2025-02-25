@@ -1,4 +1,4 @@
-﻿using IssueTracker.Api.Employee.Domain;
+﻿using IssueTracker.Api.Employees.Domain;
 using IssueTracker.Tests.Fixtures;
 using Marten;
 
