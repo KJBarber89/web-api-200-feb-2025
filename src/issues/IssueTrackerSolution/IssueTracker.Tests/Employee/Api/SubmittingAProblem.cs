@@ -1,7 +1,7 @@
 ﻿
 
 using Alba.Security;
-using IssueTracker.Api.Employee.Api;
+using IssueTracker.Api.Employees.Api;
 using IssueTracker.Tests.Fixtures;
 using JasperFx.CodeGeneration.Frames;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -35,6 +35,20 @@ public class SubmittingAProblem(EmployeeHostedIntegrationTest fixture)
         // figure out what the API should return for this.
 
 
+    }
+
+    [Fact]
+    public async Task SoftwareNotInTheCataglogReturnsFourOhFour()
+    {
+        var problem = new ProblemSubmitModel("Thing is broke real bad");
+        var response = await fixture.Host.Scenario(api =>
+        {
+            api.Post
+            .Json(problem)
+            .ToUrl($"/employee/software/{SeededSoftware.NotPresentInCatalog}/problems");
+            api.StatusCodeShouldBe(404);
+            
+        });
     }
 }
 
