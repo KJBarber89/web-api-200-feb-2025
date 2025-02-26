@@ -1,0 +1,11 @@
+@VipIssue.Api_HostAddress = http://localhost:1338
+
+POST {{VipIssue.Api_HostAddress}}/vips/notifications
+Accept: application/json
+
+{
+  "problem": "http://localhost:1337/problems/6bbe43c5-337a-4695-9875-a70985c8778a",
+  "description": "My stuff is broken again! Help!"
+}
+
+###
