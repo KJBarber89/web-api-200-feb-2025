@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace IssueTracker.Api.Employees.Services;
-//to do for demo- maybe later. use at y our own discretion 
+
+/// <summary>
+///  For a demo - maybe later. Use at your own discretion;
+/// </summary>
 public class ReturnNotFoundIfNoUserFilter : IEndpointFilter
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)

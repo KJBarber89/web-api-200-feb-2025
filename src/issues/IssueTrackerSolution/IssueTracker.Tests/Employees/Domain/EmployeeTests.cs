@@ -12,7 +12,7 @@ public class EmployeeTests(UnitIntegrationTestFixture fixture)
 
     public async Task CanCreateAnEmployee()
     {
-        IDocumentSession session = fixture.Store.LightweightSession();
+        IDocumentSession session = fixture.Store.LightweightSession(); 
 
 
         var repository = new EmployeeRepository(session); // a thing that handles persistence.
@@ -29,7 +29,7 @@ public class EmployeeTests(UnitIntegrationTestFixture fixture)
         Assert.Equal(emp.Id, emp2.Id);
 
         var emp3 = await repository.GetBySubAsync(sub);
-
+       
         Assert.NotNull(emp3);
         // Assert.Equal(/// No sub ?? We should probably check that)
 

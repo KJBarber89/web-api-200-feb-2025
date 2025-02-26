@@ -28,12 +28,12 @@ public class SubmittingAProblem(EmployeeHostedIntegrationTest fixture)
         {
             api
                 .WithClaim(new Claim("sub", "bob@company.com"));
-            api.Post
-        .Json(problem)
-        .ToUrl($"/employee/software/{SeededSoftware.DockerDesktop}/problems");
+                api.Post
+            .Json(problem)
+            .ToUrl($"/employee/software/{SeededSoftware.DockerDesktop}/problems");
         });
 
-        // we should probably verify something here, right?
+       // we should probably verify something here, right?
 
 
     }
@@ -42,15 +42,15 @@ public class SubmittingAProblem(EmployeeHostedIntegrationTest fixture)
     public async Task SoftwareNotIntheCatalogReturnsFourOhFour()
     {
         var problem = new ProblemSubmitModel("Thing is broke real bad");
-
+        
         var response = await fixture.Host.Scenario(api =>
         {
-
+        
             api.Post
                 .Json(problem)
                 .ToUrl($"/employee/software/{SeededSoftware.NotPresentInCatalog}/problems");
             api.StatusCodeShouldBe(404);
-
+            
         });
     }
 
@@ -66,7 +66,7 @@ public class SubmittingAProblem(EmployeeHostedIntegrationTest fixture)
 
         await fixture.Host.Scenario(api =>
         {
-
+            
             api.WithClaim(new Claim("sub", sub));
             api.Post
                 .Json(problem)
@@ -78,9 +78,9 @@ public class SubmittingAProblem(EmployeeHostedIntegrationTest fixture)
 
         Assert.NotNull(savedUser);
     }
+    
 
-
-
+    
 
 }
 
@@ -96,21 +96,16 @@ public class EmployeeHostedIntegrationTest : HostedUnitIntegrationTestFixture
 
     protected override void ConfigureServices(IServiceCollection services)
     {
-        var fakeEmloyeeProvider = Substitute.For<IProcessCommandsForTheCurrentEmployee>();
-        var fakeEmployeeEntity = new EmployeeEntity
-        {
-            Id = Guid.NewGuid()
-        };
-        fakeEmloyeeProvider.ProcessProblemAsync(Arg.Any<SubmitProblem>()).Returns(Task.FromResult(new ProblemSubmitted(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "tacos", DateTimeOffset.UtcNow)));
-
-        // services.AddScoped<IProcessCommandsForTheCurrentEmployee>(_ => fakeEmloyeeProvider);
+       // for things that don't exist yet.
     }
 
     protected override void ConfigureTestServices(IServiceCollection services)
     {
+        // for things that do exist, but you want to replace in your test with another thing.
+
         base.ConfigureTestServices(services);
     }
 }
 
 [CollectionDefinition("EmployeeApiCollection")]
-public class EmployeeApiFixture : ICollectionFixture<EmployeeHostedIntegrationTest> { }
+public class EmployeeApiFixture: ICollectionFixture<EmployeeHostedIntegrationTest> { }

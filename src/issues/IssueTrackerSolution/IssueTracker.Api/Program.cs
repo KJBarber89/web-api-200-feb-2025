@@ -24,14 +24,14 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("docs", c =>
     {
         c.Title = "Issue Tracker API";
-
+      
     });
 }
 
 app.UseMiddleware<GlobalChaosExceptionHandler>();
 app.MapIssueTracker();
 
-
+// right here it's going call the test fixtures ConfigureServices - use that to add any missing services that just haven't been created yet.
 
 app.Run();
 

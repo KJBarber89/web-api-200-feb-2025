@@ -1,4 +1,4 @@
-﻿namespace IssueTracker.Api.Middleware;
+namespace IssueTracker.Api.Middleware;
 
 /// <summary>
 /// This exception should be thrown when preconditions are not met within the application.
@@ -13,17 +13,15 @@ public class GlobalChaosExceptionHandler(
     {
         try
         {
-            await next(context);
+            await next(context); // notices that I am doing this FIRST
         }
         catch (ChaosException ex)
         {
             logger.LogError(ex, "Chaos Exception");
+            // whatever else you might want to do.
+            throw;
 
         }
-        catch
-        {
-            logger.LogError("An unexpected error occurred");
-            throw;
-        }
+      
     }
 }
