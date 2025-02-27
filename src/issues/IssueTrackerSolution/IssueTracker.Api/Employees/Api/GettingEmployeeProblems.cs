@@ -7,7 +7,7 @@ namespace IssueTracker.Api.Employees.Api;
 public static class GettingEmployeeProblems
 {
 
-    public static async Task<Ok<EmployeeProblemReadModel>> GetProblem(
+    public static async Task<Results<Ok<EmployeeProblemReadModel>, NotFound>> GetProblem(
         IProvideTheEmployeeId employeeProvider,
         IDocumentSession session,
         Guid softwareId,
@@ -15,8 +15,9 @@ public static class GettingEmployeeProblems
         CancellationToken token
         )
     {
+
         var employeeId = await employeeProvider.GetEmployeeIdAsync();
-        var problem = await session.Query<EmployeeProblemReadModel>().Where(p => p.Id == problemId && p.SoftwareId == softwareId && employeeId == employeeId.SingleOrDefaultAsync());
+        var problem = await session.Query<EmployeeProblemReadModel>().Where(p => p.Id == problemId && p.SoftwareId == softwareId && p.EmployeeId == employeeId).SingleOrDefaultAsync();
         if (problem is null)
         {
             return TypedResults.NotFound();
@@ -26,16 +27,17 @@ public static class GettingEmployeeProblems
             return TypedResults.Ok(problem);
         }
     }
-
     public static async Task<Ok<IReadOnlyList<EmployeeProblemReadModel>>> GetAllProblems(
         IProvideTheEmployeeId employeeProvider,
         IDocumentSession session,
         Guid softwareId,
-        CancellationToken token{
+        CancellationToken token)
+    {
 
         var employeeId = await employeeProvider.GetEmployeeIdAsync();
-        var problems = await session.Query<EmployeeProblemReadModel>().Where(p => p.EmployeeId == employeeId && p.SoftwareId
+
+        var problems = await session.Query<EmployeeProblemReadModel>().Where(p => p.EmployeeId == employeeId && p.SoftwareId == softwareId).ToListAsync();
+
         return TypedResults.Ok(problems);
     }
-        )}
 }

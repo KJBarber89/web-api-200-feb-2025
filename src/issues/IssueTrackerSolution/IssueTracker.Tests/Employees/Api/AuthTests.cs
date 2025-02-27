@@ -9,7 +9,7 @@ public class AuthTests
 {
     [Theory]
     [InlineData($"/employee/software/{SeededSoftware.VisualStudioCode}/problems")]
-    public async Task MustBeAuthenticatedToPostTheseUrls(string resource)
+    public async Task MustBeAuthenticatedToPostToTheseUrls(string resource)
     {
         var host = await AlbaHost.For<Program>();
 
@@ -20,3 +20,4 @@ public class AuthTests
         });
     }
 }
+

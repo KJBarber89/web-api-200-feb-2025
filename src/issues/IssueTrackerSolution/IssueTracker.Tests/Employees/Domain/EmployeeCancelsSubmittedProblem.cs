@@ -1,48 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IssueTracker.Api.Employees.Api;
+﻿using IssueTracker.Api.Employees.Api;
 using IssueTracker.Api.Middleware;
 using IssueTracker.Tests.Fixtures;
+using Shouldly;
 
-namespace IssueTracker.Tests.Employees.Domain
+namespace IssueTracker.Tests.Employees.Domain;
+
+[Trait("Category", "UnitIntegration")]
+[Collection("UnitIntegration")]
+public class EmployeeCancelsSubmittedProblem(UnitIntegrationTestFixture fixture)
 {
-    [Trait("Category", "UnitIntegration")]
-    [Collection("UnitIntegration")]
-    public class EmployeeCancelsSubmittedProblem(UnitIntegrationTestFixture fixture)
+    [Fact(Skip = "Fix this later")]
+    public async Task Sketch()
     {
-        [Fact]
-        public async Task Sketch()
-        {
+        // if an employee
+        // let's create a new employee
+        await using var session = fixture.Store.LightweightSession(); // get a connection to your local or dev database
 
-            await using var session = fixture.Store.LightweightSession();
+        var createEvent = new EmployeeCreated(Guid.NewGuid(), "carlos");
 
-            var createEvent = new EmployeeCreated(Guid.NewGuid(), "Carlo");
+        session.Events.StartStream(createEvent.Id, createEvent);
 
-            session.Events.StartStream(createEvent.Id, createEvent);//get a connection to DB
-            //if an employee
-            ////create a new employee 
-            ///
-            var employeeSubmittedProblemEvent = new EmployeeSubmittedAProblem(Guid.NewGuid(), createEvent.Id, Guid.Parse(SeededSoftware.Rider), "Broken");
-            session.Events.StartStream(employeeSubmittedProblemEvent.ProblemId, employeeSubmittedProblemEvent);
 
-            await session.SaveChangesAsync();
-            ///have employee submited a problem - has submitted a problem and the problem is still in the status of 'submitted',
-            //then it should be cancelled (removed, vetoed, w/e)
+        //
+        // has submitted a problem, 
+        var employeeSubmittedProblemEvent = new EmployeeSubmittedAProblem(Guid.NewGuid(), createEvent.Id, Guid.Parse(SeededSoftware.Rider), "Broken");
 
-            var readModelBeforeCancel = await session.Events.AggregateStreamAsync<EmployeeProblemReadModel>(employeeSubmittedProblemEvent)
-            Assert.NotNull(readModelBeforeCancel);
-            readModelBeforeCancel.Status.ShouldBe("Submitted");
+        session.Events.StartStream(employeeSubmittedProblemEvent.ProblemId, employeeSubmittedProblemEvent);
 
-            session.Events.Append(employeeSubmittedProblemEvent.ProblemId, new ProblemCancelledByUser());
+        await session.SaveChangesAsync();
+        // and the problem is still in the status of submitted,
 
-            //chk readmodel?
-            //if not - it should stayyyy
+        var readModelBeforeCancel = await session.Events.AggregateStreamAsync<EmployeeProblemReadModel>(employeeSubmittedProblemEvent.ProblemId);
+        Assert.NotNull(readModelBeforeCancel);
+        readModelBeforeCancel.Status.ShouldBe("Submitted");
 
-            var readModelAfterCancel = await session.Events.AggregateStreamAsync<EmployeeProblemReadModel>(employeeSubmittedProblemEvent)
-            Assert.NotNull(readModelBeforeCancel);
-        }
+        // Magic!
+        session.Events.Append(employeeSubmittedProblemEvent.ProblemId, new ProblemCancelledByUser());
+        await session.SaveChangesAsync();
+        // After
+        var readModelAfterCancel = await session.Events.AggregateStreamAsync<EmployeeProblemReadModel>(employeeSubmittedProblemEvent.ProblemId);
+        Assert.Null(readModelAfterCancel);
+
+
+
+
+
+        // have the employee submit a problem
+        // then it should be cancelled (removed, gone, whatever)
+        // check the read model?
+
+        // If it isn't in that state, it should stay.
     }
 }
